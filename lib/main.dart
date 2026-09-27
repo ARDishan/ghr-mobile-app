@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'routes/app_routes.dart';
-import 'services/bloc/auth/auth_bloc.dart';
-import 'utils/theme/app_theme.dart';
+import 'core/theme/app_theme.dart';
+import 'injection_container.dart' as di;
 
-void main() {
+// TODO: wire up GoRouter (core/router/app_router.dart) and Supabase
+// initialization (core/network/supabase_client.dart) before running.
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
+  await di.init();
   runApp(const GHRealEstateApp());
 }
 
@@ -25,17 +20,12 @@ class GHRealEstateApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
-      ],
-      child: MaterialApp(
-        title: 'GH Real Estate',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        initialRoute: AppRoutes.splash,
-        onGenerateRoute: AppRoutes.generateRoute,
-      ),
+    return MaterialApp(
+      title: 'GH Real Estate',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      // TODO: replace with GoRouter (routerConfig: AppRouter.router).
+      home: const Scaffold(body: Center(child: Text('GHR'))),
     );
   }
 }
