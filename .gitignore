@@ -45,5 +45,7 @@ app.*.map.json
 /android/app/release
 
 .env
-
 .vscode
+/scripts/*
+/scripts/.env
+/scripts/upload_project_images.py

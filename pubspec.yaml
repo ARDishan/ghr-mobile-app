@@ -28,6 +28,8 @@ dependencies:
 
   # Backend
   supabase_flutter: ^2.8.0
+  flutter_dotenv: ^6.0.1
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +46,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - .env
 
   fonts:
     - family: Poppins
