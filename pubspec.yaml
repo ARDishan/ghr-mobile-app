@@ -30,6 +30,10 @@ dependencies:
   supabase_flutter: ^2.8.0
   flutter_dotenv: ^6.0.1
   uuid: ^4.6.0
+  intl: ^0.20.3
+  url_launcher: ^6.3.2
+  package_info_plus: ^10.2.1
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

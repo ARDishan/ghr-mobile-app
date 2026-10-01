@@ -29,7 +29,16 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
   }
 
   void _submit(BuildContext context) {
-    final e164 = PhoneFormatter.toE164(_phoneController.text.trim());
+    final e164 = PhoneFormatter.toE164(_phoneController.text);
+    if (!PhoneFormatter.isValid(e164)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid mobile number.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
     context.read<AuthBloc>().add(AuthPhoneSubmitted(e164));
   }
 
@@ -41,6 +50,12 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: BlocConsumer<AuthBloc, AuthState>(
+          // Only react while this page is the visible one. Once the OTP page
+          // is pushed on top, this page stays mounted underneath and would
+          // otherwise also react to "resend" (pushing a second OTP page) and
+          // to OTP errors (showing duplicate snackbars).
+          listenWhen: (previous, current) =>
+              ModalRoute.of(context)?.isCurrent ?? false,
           listener: (context, state) {
             if (state is AuthOtpSent) {
               context.push(RouteNames.otpVerification, extra: state.phone);

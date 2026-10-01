@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supa;
 import '../../../../core/errors/exceptions.dart';
 import '../models/auth_user_model.dart';
@@ -15,6 +16,20 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final supa.SupabaseClient client;
   AuthRemoteDataSourceImpl(this.client);
+
+  /// Fetches the logged-in customer's row. `customers.mobile` can be stored in
+  /// any format ("+94...", "94...", "07...", with spaces), so we do NOT filter
+  /// by mobile here: Row Level Security (which compares normalised numbers)
+  /// already returns only the caller's own row. Failures are logged.
+  Future<CustomerModel?> _fetchCustomer() async {
+    try {
+      final row = await client.from('customers').select().limit(1).maybeSingle();
+      return row == null ? null : CustomerModel.fromJson(row);
+    } catch (e) {
+      debugPrint('Customer lookup failed: $e');
+      return null;
+    }
+  }
 
   @override
   Future<bool> checkCustomerExists(String phone) async {
@@ -34,9 +49,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> sendOtp(String phone) async {
     try {
-      // shouldCreateUser is left at its default; since we've already gated
-      // this behind checkCustomerExists, an auth.users row will be created
-      // on first successful OTP verification for a known ERP customer.
       await client.auth.signInWithOtp(phone: phone);
     } on supa.AuthException catch (e) {
       throw AuthException(e.message);
@@ -63,25 +75,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (user == null) {
         throw AuthException('OTP verification did not return a user.');
       }
-
-      CustomerModel? customer;
-      try {
-        final row = await client
-            .from('customers')
-            .select()
-            .eq('mobile', phone)
-            .maybeSingle();
-        if (row != null) {
-          customer = CustomerModel.fromJson(row);
-        }
-      } catch (_) {
-        // Non-fatal: the user is authenticated even if the profile lookup
-        // fails. TODO: decide if this should actually be treated as fatal.
-      }
-
+      final customer = await _fetchCustomer();
       return AuthUserModel.fromSupabaseUser(user, customer: customer);
     } on supa.AuthException catch (e) {
       throw AuthException(e.message);
+    } on AuthException {
+      rethrow;
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -91,21 +90,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<AuthUserModel?> getCurrentUser() async {
     final user = client.auth.currentUser;
     if (user == null) return null;
-
-    CustomerModel? customer;
-    try {
-      final row = await client
-          .from('customers')
-          .select()
-          .eq('mobile', user.phone ?? '')
-          .maybeSingle();
-      if (row != null) {
-        customer = CustomerModel.fromJson(row);
-      }
-    } catch (_) {
-      // Non-fatal, see note in verifyOtp above.
-    }
-
+    final customer = await _fetchCustomer();
     return AuthUserModel.fromSupabaseUser(user, customer: customer);
   }
 

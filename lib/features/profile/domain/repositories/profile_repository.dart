@@ -1,3 +1,7 @@
-// Repository contract for the profile feature (implemented in data layer).
-// TODO: define methods.
-abstract class ProfileRepository {}
+import 'package:dartz/dartz.dart';
+import '../../../../core/errors/failures.dart';
+import '../entities/profile_entity.dart';
+
+abstract class ProfileRepository {
+  Future<Either<Failure, ProfileEntity>> getProfile();
+}

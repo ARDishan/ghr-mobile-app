@@ -9,10 +9,3 @@ abstract class ProjectsEvent extends Equatable {
 class ProjectsLoadRequested extends ProjectsEvent {
   const ProjectsLoadRequested();
 }
-
-class ProjectDetailLoadRequested extends ProjectsEvent {
-  final String id;
-  const ProjectDetailLoadRequested(this.id);
-  @override
-  List<Object?> get props => [id];
-}

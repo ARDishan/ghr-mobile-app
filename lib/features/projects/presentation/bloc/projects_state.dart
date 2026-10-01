@@ -18,15 +18,6 @@ class ProjectsLoaded extends ProjectsState {
   List<Object?> get props => [projects];
 }
 
-class ProjectDetailLoading extends ProjectsState {}
-
-class ProjectDetailLoaded extends ProjectsState {
-  final ProjectEntity project;
-  const ProjectDetailLoaded(this.project);
-  @override
-  List<Object?> get props => [project];
-}
-
 class ProjectsError extends ProjectsState {
   final String message;
   const ProjectsError(this.message);

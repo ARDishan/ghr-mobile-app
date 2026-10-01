@@ -1,3 +1,7 @@
-// Events for ProfileBloc.
-// TODO: define.
-abstract class ProfileEvent {}
+abstract class ProfileEvent {
+  const ProfileEvent();
+}
+
+class ProfileLoadRequested extends ProfileEvent {
+  const ProfileLoadRequested();
+}
