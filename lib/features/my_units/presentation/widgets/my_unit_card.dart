@@ -53,6 +53,21 @@ class MyUnitCard extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (!unit.isMainBranch && unit.branchLabel != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.gold.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(unit.branchLabel!,
+                            style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.gold,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                      const SizedBox(width: 6),
+                    ],
                     if (unit.hasOverdue)
                       Container(
                         padding: const EdgeInsets.symmetric(

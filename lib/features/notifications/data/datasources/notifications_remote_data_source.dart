@@ -16,7 +16,7 @@ class NotificationsRemoteDataSourceImpl implements NotificationsRemoteDataSource
     try {
       final rows = await client
           .from('notifications')
-          .select('id, title, body, created_at, notification_reads(notification_id)')
+          .select('id, kind, title, body, link_url, created_at, notification_reads(notification_id)')
           .order('created_at', ascending: false)
           .limit(100);
       return (rows as List)

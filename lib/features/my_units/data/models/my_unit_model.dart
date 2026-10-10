@@ -16,6 +16,8 @@ class MyUnitModel extends MyUnitEntity {
     super.outstanding,
     super.overdue,
     super.defaultAmount,
+    super.branchPrefix,
+    super.branchName,
   });
 
   static double _d(dynamic v) => (v as num?)?.toDouble() ?? 0;
@@ -37,6 +39,8 @@ class MyUnitModel extends MyUnitEntity {
       outstanding: _d(json['outstanding']),
       overdue: _d(json['overdue']),
       defaultAmount: _d(json['default_amount']),
+      branchPrefix: json['branch_prefix'] as String?,
+      branchName: json['branch_name'] as String?,
     );
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ghr/features/projects/presentation/bloc/project_detail_bloc.dart';
-import 'package:ghr/features/projects/presentation/bloc/project_detail_event.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/about/presentation/cubit/about_cubit.dart';
 import '../../features/about/presentation/pages/about_page.dart';
@@ -22,7 +20,10 @@ import '../../features/notifications/presentation/pages/notifications_page.dart'
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/profile/presentation/bloc/profile_event.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/projects/presentation/bloc/project_detail_bloc.dart';
+import '../../features/projects/presentation/bloc/project_detail_event.dart';
 import '../../features/projects/presentation/pages/project_detail_page.dart';
+import '../../features/projects/presentation/project_filter.dart';
 import '../../features/projects/presentation/pages/projects_list_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/shell/presentation/pages/main_shell_page.dart';
@@ -84,14 +85,24 @@ class AppRouter {
         // Full-screen pages (outside the shell)
         GoRoute(
           path: RouteNames.projects,
-          builder: (context, state) => const ProjectsListPage(),
+          builder: (context, state) {
+            final q = state.uri.queryParameters;
+            return ProjectsListPage(
+              initialFilter: ProjectFilter(
+                city: q['city'],
+                type: q['type'],
+                branchPrefix: q['branch'],
+              ),
+            );
+          },
         ),
         GoRoute(
           path: RouteNames.projectDetailPattern,
           builder: (context, state) {
             final id = state.pathParameters['id']!;
             return BlocProvider<ProjectDetailBloc>(
-              create: (_) => sl<ProjectDetailBloc>()..add(ProjectDetailLoadRequested(id)),
+              create: (_) =>
+                  sl<ProjectDetailBloc>()..add(ProjectDetailLoadRequested(id)),
               child: ProjectDetailPage(projectId: id),
             );
           },

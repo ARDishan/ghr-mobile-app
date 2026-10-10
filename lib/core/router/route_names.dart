@@ -15,6 +15,16 @@ class RouteNames {
   static String projectDetail(String id) => '/projects/$id';
   static const String units = '/units';
 
+  /// /projects with optional filters, e.g. projectsFiltered(city: 'Galle').
+  static String projectsFiltered({String? city, String? type, String? branch}) {
+    final q = <String, String>{
+      if (city != null) 'city': city,
+      if (type != null) 'type': type,
+      if (branch != null) 'branch': branch,
+    };
+    return Uri(path: projects, queryParameters: q.isEmpty ? null : q).toString();
+  }
+
   // Menu pages
   static const String profile = '/profile';
   static const String myUnits = '/my-units';

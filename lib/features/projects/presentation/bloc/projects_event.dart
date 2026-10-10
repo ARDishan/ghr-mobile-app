@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:equatable/equatable.dart';
 
 abstract class ProjectsEvent extends Equatable {
@@ -7,5 +8,7 @@ abstract class ProjectsEvent extends Equatable {
 }
 
 class ProjectsLoadRequested extends ProjectsEvent {
-  const ProjectsLoadRequested();
+  /// Completed when loading finishes, so pull-to-refresh can await it.
+  final Completer<void>? completer;
+  const ProjectsLoadRequested({this.completer});
 }

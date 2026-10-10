@@ -16,11 +16,13 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     ProjectsLoadRequested event,
     Emitter<ProjectsState> emit,
   ) async {
-    emit(ProjectsLoading());
+    // On refresh keep the current list visible instead of flashing a loader.
+    if (state is! ProjectsLoaded) emit(ProjectsLoading());
     final result = await getProjects();
     result.fold(
       (failure) => emit(ProjectsError(failure.message)),
       (projects) => emit(ProjectsLoaded(projects)),
     );
+    event.completer?.complete();
   }
 }

@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/text_utils.dart';
 
 /// One unit owned by the logged-in customer, with its balance figures
 /// (from the get_my_outstanding_summary RPC).
@@ -17,6 +19,8 @@ class MyUnitEntity extends Equatable {
   final double outstanding;
   final double overdue;
   final double defaultAmount;
+  final String? branchPrefix;
+  final String? branchName;
 
   const MyUnitEntity({
     required this.unitRefId,
@@ -33,14 +37,31 @@ class MyUnitEntity extends Equatable {
     this.outstanding = 0,
     this.overdue = 0,
     this.defaultAmount = 0,
+    this.branchPrefix,
+    this.branchName,
   });
 
   bool get hasOverdue => overdue > 0;
 
   String get displayProject {
     final n = projectName;
-    if (n != null && n.isNotEmpty && n != 'NA') return n;
+    if (n != null && n.isNotEmpty && n != 'NA') return toTitleCase(n);
     return projectCode ?? unitRefId;
+  }
+
+  /// Main company is GHR; other branches (e.g. Corals Edge) get a tag.
+  bool get isMainBranch =>
+      branchPrefix == null ||
+      branchPrefix!.toUpperCase() == AppConstants.mainBranchPrefix;
+
+  String? get branchLabel {
+    switch ((branchPrefix ?? '').toUpperCase()) {
+      case 'CED':
+        return 'Corals Edge';
+      case 'GHR':
+        return 'GHR';
+    }
+    return branchName == null ? branchPrefix : toTitleCase(branchName!);
   }
 
   String get displayUnit =>
@@ -54,6 +75,6 @@ class MyUnitEntity extends Equatable {
   List<Object?> get props => [
         unitRefId, projectBasicId, projectName, projectCode, floor, unit,
         apartmentType, sqrFt, unitValue, totalScheduled, totalReceived,
-        outstanding, overdue, defaultAmount,
+        outstanding, overdue, defaultAmount, branchPrefix, branchName,
       ];
 }

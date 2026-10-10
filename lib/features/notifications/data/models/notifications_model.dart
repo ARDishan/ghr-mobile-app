@@ -7,6 +7,8 @@ class NotificationModel extends NotificationEntity {
     required super.body,
     required super.createdAt,
     super.isRead,
+    super.kind,
+    super.linkUrl,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,8 @@ class NotificationModel extends NotificationEntity {
       body: json['body'] as String,
       createdAt: DateTime.parse(json['created_at'] as String),
       isRead: reads.isNotEmpty,
+      kind: (json['kind'] as String?) ?? 'ANNOUNCEMENT',
+      linkUrl: json['link_url'] as String?,
     );
   }
 }

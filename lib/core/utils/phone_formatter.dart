@@ -32,4 +32,12 @@ class PhoneFormatter {
     if (e164.startsWith('+94')) return RegExp(r'^\+94[0-9]{9}$').hasMatch(e164);
     return RegExp(r'^\+[0-9]{8,15}$').hasMatch(e164);
   }
+
+  /// "+94712345678" -> "+94 71 234 5678" (other values returned unchanged).
+  static String pretty(String e164) {
+    if (RegExp(r'^\+94[0-9]{9}$').hasMatch(e164)) {
+      return '+94 ${e164.substring(3, 5)} ${e164.substring(5, 8)} ${e164.substring(8)}';
+    }
+    return e164;
+  }
 }

@@ -15,6 +15,11 @@ class BookmarksCubit extends Cubit<BookmarksState> {
 
   BookmarksCubit(this._local) : super(BookmarksState(_local.read()));
 
+  Future<void> clear() async {
+    emit(const BookmarksState({}));
+    await _local.write({});
+  }
+
   Future<void> toggle(String projectId) async {
     final next = {...state.ids};
     if (!next.add(projectId)) next.remove(projectId);

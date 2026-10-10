@@ -28,6 +28,23 @@ class LinkLauncher {
   static Future<void> email(BuildContext context, String address) =>
       open(context, Uri(scheme: 'mailto', path: address));
 
+  /// mailto with a prefilled subject/body (spaces encoded as %20, not '+').
+  static Future<void> emailWith(
+    BuildContext context,
+    String address, {
+    required String subject,
+    String body = '',
+  }) =>
+      open(
+        context,
+        Uri(
+          scheme: 'mailto',
+          path: address,
+          query: 'subject=${Uri.encodeComponent(subject)}'
+              '&body=${Uri.encodeComponent(body)}',
+        ),
+      );
+
   static Future<void> map(BuildContext context, String address) => open(
         context,
         Uri.https('www.google.com', '/maps/search/', {

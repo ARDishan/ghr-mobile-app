@@ -11,14 +11,17 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   final supa.SupabaseClient client;
   ProjectsRemoteDataSourceImpl(this.client);
 
+  static const _select = '*, branches(branchprefix, branchname)';
+
   @override
   Future<List<ProjectModel>> getProjects() async {
     try {
       final rows = await client
           .from('projects')
-          .select()
+          .select(_select)
           .eq('is_active', true)
-          .order('created_at', ascending: false);
+          // newest ERP projects first
+          .order('erp_created_on', ascending: false, nullsFirst: false);
       return (rows as List)
           .map((row) => ProjectModel.fromJson(row as Map<String, dynamic>))
           .toList();
@@ -33,7 +36,7 @@ class ProjectsRemoteDataSourceImpl implements ProjectsRemoteDataSource {
   Future<ProjectModel> getProjectById(String id) async {
     try {
       final row =
-          await client.from('projects').select().eq('id', id).single();
+          await client.from('projects').select(_select).eq('id', id).single();
       return ProjectModel.fromJson(row);
     } on supa.PostgrestException catch (e) {
       throw ServerException(e.message);
