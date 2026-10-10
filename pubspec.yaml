@@ -44,6 +44,13 @@ dev_dependencies:
   # Code generation for injectable (optional, wire up when DI grows)
   build_runner: ^2.4.13
   injectable_generator: ^2.6.2
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/GHR.png"
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
